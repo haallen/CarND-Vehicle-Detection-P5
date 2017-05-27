@@ -88,17 +88,19 @@ Here's an example of my search windows. The red boxes are all the windows that w
 
 In addition to the heatmap, window choice, and colorspace optimizations already mentioned I also optimized on window overlap. I found that overlapping some windows by more than 50% resulted in a better outcome. I balanced the benefits of overlap with the processing time to do the calculation.
 
-Here's some examples of final results
+Here's some examples of final results:
+
 ![alt text][image5]
 ![alt text][image6]
 ![alt text][image7]
 
 I also added the svc.decision_function to further minimize false alarms in my search_windows method. By only allowing high confidence predictions, the resulting detection boxes are more accurate. 
----
+
 
 ### Video Implementation
 
 ####1. Provide a link to your final video output.  Your pipeline should perform reasonably well on the entire project video (somewhat wobbly or unstable bounding boxes are ok as long as you are identifying the vehicles most of the time with minimal false positives.)
+
 Here's a [link to my video result](./output_images/project_video_output.mp4)
 
 
@@ -110,7 +112,7 @@ Here are the boxes without heatmap averaging:
 
 ![alt text][image8]
 
-And here are the boxes with heatmap averaging. You can see that averaging results in a much better box. 
+And here are the boxes with heatmap averaging. You can see that averaging results in a much better box around the white car.
 
 ![alt text][image9]
 
