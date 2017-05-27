@@ -15,10 +15,10 @@ The goals / steps of this project are the following:
 [image2]: ./output_images/HOGviz.png
 [image3]: ./output_images/heatmap.png
 [image4]: ./output_images/search_windows.png
-[image5]: ./examples/bboxes_and_heat.png
-[image6]: ./examples/labels_map.png
-[image7]: ./examples/output_bboxes.png
-[video1]: ./project_video.mp4
+[image5]: ./output_images/detects1.png
+[image6]: ./output_images/detects2.png
+[image7]: ./output_images/detects3.png
+[video1]: ./output_images/project_video_output.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
 ###Here I will consider the rubric points individually and describe how I addressed each point in my implementation.  
@@ -45,6 +45,7 @@ I then explored different color spaces and different `skimage.hog()` parameters 
 Here is an example using the `HLS` color space and HOG parameters of `orientations=11`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 ![alt text][image2]
+
 Note: this is only for the L channel .
 
 ####2. Explain how you settled on your final choice of HOG parameters.
@@ -72,6 +73,7 @@ The code for searching an image is in the search_window method of my [testing fi
 The code for calling this method is in lines 251-292 of the same file. I created windows of 4 different scales to search. I also used the heatmap technique discussed in lectures to combine multiple detections and reduce false alarms.
 
 Here's an example of the heatmap:
+
 ![alt text][image3]
 
 Here's an example of my search windows. The red boxes are all the windows that were searched. The green boxes indicate that the image within the box was classified as a vehicle. The blue box is the result of the heatmap processing. 
@@ -83,6 +85,8 @@ In addition to the heatmap, window choice, and colorspace optimizations already 
 
 Here's some examples of final results
 ![alt text][image5]
+![alt text][image6]
+![alt text][image7]
 ---
 
 ### Video Implementation
@@ -103,5 +107,6 @@ As mentioned earlier, I applied the heatmap algorithm and code presented in the 
 
 First and foremost, my approach is too computationally expensive. I looked into HOG subsampling and couldn't get it working, but think I know how. There also seem to be some accuracy issues with my multi-scale windows, so this subsampling technique would help with that.
 
-I would also try to track the boxes between frames and perform some sort of smoothing. 
+I would also try to track the boxes between frames and perform some sort of smoothing to get a stable track. 
 
+Sigh, and I would like to have it so the box goes around the entire car. I was just happy that it found the car at all without any false alarms. 
