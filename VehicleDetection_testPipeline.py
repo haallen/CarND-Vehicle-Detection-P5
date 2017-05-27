@@ -107,12 +107,23 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
         prediction = clf.predict(test_features)
         
         #7) If positive (prediction == 1) then save the window
+            #AND if 
         if prediction == 1:
-            on_windows.append(window)
+            
+            if svc.decision_function(test_features) > 0.1:
+                on_windows.append(window)
     
     #8) Return windows for positive detections
     return on_windows
 
+# Define a function to draw bounding boxes
+def draw_boxes(img, bboxes, color=(0, 0, 255), thick=6):
+    # Iterate through the bounding boxes
+    for bbox in bboxes:
+        # Draw a rectangle given bbox coordinates
+        cv2.rectangle(img, bbox[0], bbox[1], color, thick)
+    # Return the image copy with boxes drawn
+    return img
 #%%
 
 def add_heat(heatmap, bbox_list):
@@ -146,24 +157,14 @@ def draw_labeled_bboxes(img, labels):
     # Return the image
     return img
 
-def heatitup(image,box_list):
-    
-    heat = np.zeros_like(image[:,:,0]).astype(np.float)
-    
-    # Add heat to each box in box list
-    heat = add_heat(heat,box_list)
+def average_heat(image,box_list):
 
-    # Apply threshold to help remove false positives
-    heat = apply_threshold(heat,1)
+    sumboxes=sum(box_list)
 
-    # Visualize the heatmap when displaying    
+    heat = apply_threshold(sumboxes,5)
     heatmap = np.clip(heat, 0, 255)
-    
-    # Find final boxes from heatmap using label function
     labels = label(heatmap)
-
     draw_img = draw_labeled_bboxes(np.copy(image), labels)
-    #print(draw_img)
     """
     fig = plt.figure()
     plt.subplot(121)
@@ -175,6 +176,34 @@ def heatitup(image,box_list):
     fig.tight_layout()
     """
     return draw_img
+def heatitup(image,box_list):
+    
+    heat = np.zeros_like(image[:,:,0]).astype(np.float)
+
+    # Add heat to each box in box list
+    heat = add_heat(heat,box_list)
+
+    # Apply threshold to help remove false positives
+    heat = apply_threshold(heat,1)
+
+    # Visualize the heatmap when displaying    
+    #heatmap = np.clip(heat, 0, 255)
+    
+    # Find final boxes from heatmap using label function
+    #labels = label(heatmap)
+    #draw_img = draw_labeled_bboxes(np.copy(image), labels)
+    #print(draw_img)
+    """
+    fig = plt.figure()
+    plt.subplot(121)
+    plt.imshow(draw_img)
+    plt.title('Car Positions')
+    plt.subplot(122)
+    plt.imshow(heatmap, cmap='hot')
+    plt.title('Heat Map')
+    fig.tight_layout()
+    """
+    return heat
 
 #%%HOG Subsample
 
@@ -264,32 +293,51 @@ def process_image(image):
     #windows = find_cars(image, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
 
     #multi-scale windows
-    windows=[]
-    windows.extend(slide_window(image, x_start_stop=[550,None], y_start_stop=[375, 525], 
+    boxes.current_windows=[]
+    
+    boxes.current_windows.extend(slide_window(image, x_start_stop=[550,None], y_start_stop=[375, 525], 
                         xy_window=(50, 50), xy_overlap=(0.6, 0.6)))
 
-    windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[375, 575], 
+    boxes.current_windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[375, 575], 
                         xy_window=(100, 100), xy_overlap=(0.5, 0.5)))
-
-    windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[350, 550], 
+    
+    boxes.current_windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[350, 550], 
                         xy_window=(200, 200), xy_overlap=(0.5, 0.5)))
-    windows.extend(slide_window(image, x_start_stop=[375,None], y_start_stop=[300, 600], 
+    
+    boxes.current_windows.extend(slide_window(image, x_start_stop=[375,None], y_start_stop=[300, 600], 
                         xy_window=(300, 300), xy_overlap=(0.5, 0.5)))
-    windows.extend(slide_window(image, x_start_stop=[270,None], y_start_stop=[250, 650], 
+    
+    boxes.current_windows.extend(slide_window(image, x_start_stop=[270,None], y_start_stop=[250, 650], 
                        xy_window=(400, 400), xy_overlap=(0.5, 0.5)))
 
-    #windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
-    #                   xy_window=(96, 96), xy_overlap=(0.5, 0.5))
-    hot_windows = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
+    boxes.current_hot_windows = search_windows(image, boxes.current_windows, svc, X_scaler, color_space=color_space, 
                             spatial_size=spatial_size, hist_bins=hist_bins, 
                             orient=orient, pix_per_cell=pix_per_cell, 
                             cell_per_block=cell_per_block, 
                             hog_channel=hog_channel, spatial_feat=spatial_feat, 
                             hist_feat=hist_feat, hog_feat=hog_feat)                       
-    #blerg = draw_boxes(draw_image, windows, color=(255, 0, 0), thick=6)
-    #window_img = draw_boxes(blerg, hot_windows, color=(0, 255, 0), thick=6)                    
-    filtered_windows=heatitup(draw_image,hot_windows)
-    return filtered_windows
+    
+    #blerg = draw_boxes(draw_image, boxes.current_windows, color=(255, 0, 0), thick=6)
+    #window_image = draw_boxes(blerg, boxes.current_hot_windows, color=(0, 255, 0), thick=6)                    
+    boxes.all_hot_windows.append(boxes.current_hot_windows)
+    
+    #change from window_img to draw_image
+    boxes.current_heatmap=heatitup(draw_image,boxes.current_hot_windows)
+    boxes.all_heatmaps.append(boxes.current_heatmap)
+    
+    n=10#number of frames to average heatmaps over
+    averaged_heatmaps=average_heat(draw_image,boxes.all_heatmaps[-1-n:])
+    
+    return averaged_heatmaps
+
+#%% Class to store 
+class boxes():
+    def __init__(self):
+        self.current_hot_windows = []
+        self.current_windows=[]
+        self.current_heatmap=[]
+        self.all_heatmaps=[]
+        self.all_hot_windows = []
 #%% Main Pipeline for Processing Test Images
 
 classifierPath = "/Users/hope/Documents/python/carND/CarND-Vehicle-Detection/classifier.p"
@@ -297,11 +345,12 @@ pDict = pickle.load(open(classifierPath,'rb'))
 svc = pDict['svc']
 X_scaler = pDict['X_scaler']
 
+boxes=boxes()
 """
 #path to test data
 testPath = "/Users/hope/Documents/python/carND/CarND-Vehicle-Detection/test_images/"
 images = glob.glob(testPath + '/*.jpg')
-#images = [images[0]]
+images = [images[0]]
 for img in images:
     image = mpimg.imread(img)
     res = process_image(image)
@@ -310,6 +359,6 @@ for img in images:
 """
 output = 'project_video_output.mp4'
 clipObj = VideoFileClip("project_video.mp4")
-
+#clipObj = VideoFileClip("project_video.mp4").subclip(20,30)
 clip = clipObj.fl_image(process_image) 
 clip.write_videofile(output, audio=False)
