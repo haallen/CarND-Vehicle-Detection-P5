@@ -70,7 +70,7 @@ See lines 65-125 in my  [training code](https://github.com/haallen/CarND-Vehicle
 
 The code for searching an image is in the search_window method of my [testing file](https://github.com/haallen/CarND-Vehicle-Detection-P5/blob/master/VehicleDetection_testPipeline.py).
 
-The code for calling this method is in lines 251-292 of the same file. I created windows of 4 different scales to search. I also used the heatmap technique discussed in lectures to combine multiple detections and reduce false alarms.
+The code for calling this method is in lines 251-292 of the same file. I created windows of 4 different scales to search. I also used the heatmap technique discussed in lectures to combine multiple detections and reduce false alarms. This is in lines 118-177.
 
 Here's an example of the heatmap:
 
