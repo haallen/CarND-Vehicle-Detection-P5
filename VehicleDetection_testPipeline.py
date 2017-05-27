@@ -164,7 +164,7 @@ def heatitup(image,box_list):
 
     draw_img = draw_labeled_bboxes(np.copy(image), labels)
     #print(draw_img)
-    
+    """
     fig = plt.figure()
     plt.subplot(121)
     plt.imshow(draw_img)
@@ -173,7 +173,7 @@ def heatitup(image,box_list):
     plt.imshow(heatmap, cmap='hot')
     plt.title('Heat Map')
     fig.tight_layout()
-    
+    """
     return draw_img
 
 #%%HOG Subsample
@@ -266,18 +266,18 @@ def process_image(image):
     #multi-scale windows
     windows=[]
     windows.extend(slide_window(image, x_start_stop=[550,None], y_start_stop=[375, 525], 
-                        xy_window=(50, 50), xy_overlap=(0.5, 0.5)))
-    
-   
+                        xy_window=(50, 50), xy_overlap=(0.6, 0.6)))
+
     windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[375, 575], 
                         xy_window=(100, 100), xy_overlap=(0.5, 0.5)))
+
     windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[350, 550], 
                         xy_window=(200, 200), xy_overlap=(0.5, 0.5)))
     windows.extend(slide_window(image, x_start_stop=[375,None], y_start_stop=[300, 600], 
                         xy_window=(300, 300), xy_overlap=(0.5, 0.5)))
     windows.extend(slide_window(image, x_start_stop=[270,None], y_start_stop=[250, 650], 
                        xy_window=(400, 400), xy_overlap=(0.5, 0.5)))
-  
+
     #windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop, 
     #                   xy_window=(96, 96), xy_overlap=(0.5, 0.5))
     hot_windows = search_windows(image, windows, svc, X_scaler, color_space=color_space, 
@@ -297,11 +297,11 @@ pDict = pickle.load(open(classifierPath,'rb'))
 svc = pDict['svc']
 X_scaler = pDict['X_scaler']
 
-
+"""
 #path to test data
 testPath = "/Users/hope/Documents/python/carND/CarND-Vehicle-Detection/test_images/"
 images = glob.glob(testPath + '/*.jpg')
-images = [images[0]]
+#images = [images[0]]
 for img in images:
     image = mpimg.imread(img)
     res = process_image(image)
@@ -313,4 +313,3 @@ clipObj = VideoFileClip("project_video.mp4")
 
 clip = clipObj.fl_image(process_image) 
 clip.write_videofile(output, audio=False)
-"""

@@ -24,6 +24,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from lesson_functions import *
 import pickle
+
 #path to test data
 dataPath = "/Users/hope/Documents/python/carND/CarND-Vehicle-Detection/data/"
 classifierPath = "/Users/hope/Documents/python/carND/CarND-Vehicle-Detection/classifier.p"
@@ -51,7 +52,16 @@ vis = False
 vis = True
 cars = cars[0:1]
 notcars=notcars[0:1]
-"""
+carimage = mpimg.imread(cars[0])
+notcarimage = mpimg.imread(notcars[0])
+plt.figure()
+plt.subplot(121)
+plt.imshow(carimage,)
+plt.title('Example Car Image')
+plt.subplot(122)
+plt.imshow(notcarimage)
+plt.title('Example NonVehicle Image')
+""" 
 t=time.time()
 car_features = extract_features(cars, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 

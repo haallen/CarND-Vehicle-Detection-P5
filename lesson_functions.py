@@ -13,7 +13,7 @@ from skimage.feature import hog
 
 ### TODO: Tweak these parameters and see how the results change.
 color_space = 'HLS'#'RGB' # Can be RGB, HSV, LUV, HLS, YUV, YCrCb #HLS
-orient = 9  # HOG orientations 
+orient = 11  # HOG orientations 
 pix_per_cell = 8 # HOG pixels per cell
 cell_per_block = 2 # HOG cells per block
 hog_channel = "ALL" # Can be 0, 1, 2, or "ALL" 
@@ -38,10 +38,10 @@ def get_hog_features(img, orient, pix_per_cell, cell_per_block,
         # Plot the examples
         plt.figure()
         plt.subplot(121)
-        plt.imshow(img, cmap='hot')
+        plt.imshow(img)
         plt.title('Example Car Image')
         plt.subplot(122)
-        plt.imshow(hogout[1], cmap='hot')
+        plt.imshow(hogout[1])
         plt.title('HOG Visualization')
     else:
         features = hogout
