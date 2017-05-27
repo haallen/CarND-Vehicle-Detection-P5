@@ -12,12 +12,14 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 [image1]: ./output_images/car_notcar.png
-[image2]: ./output_images/HOGviz.png
+[image2]: ./output_images/HOG_Y.png
 [image3]: ./output_images/heatmap.png
-[image4]: ./output_images/search_windows.png
+[image4]: ./output_images/boxes.png
 [image5]: ./output_images/detects1.png
 [image6]: ./output_images/detects2.png
 [image7]: ./output_images/detects3.png
+[image8]: ./output_images/without_heatmap_averaging.png
+[image9]: ./output_images/with_heatmap_averaging.png
 [video1]: ./output_images/project_video_output.mp4
 
 ## [Rubric](https://review.udacity.com/#!/rubrics/513/view) Points
@@ -46,11 +48,13 @@ Here is an example using the `YCrCb` color space and HOG parameters of `orientat
 
 ![alt text][image2]
 
+Note: this is for the Y channel. images for the other channels can be found in the output images folder.
+
 Interestingly, HLS color space provided good accuracy values but resulted in inconsistent detections of vehicles.
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of orientations, pixels_per_cell, cells_per_block and colorspaces. Colorspace had the most effect on the accuracy of my classifier. I decided to go with HLS. Orientation had some effect while pixels_per_cell and cells_per_block did not appear to have a lot of effect on the overall accuracy
+I tried various combinations of orientations, pixels_per_cell, cells_per_block and colorspaces. Colorspace had the most effect on the accuracy of my classifier. I decided to go with YCrCb. Orientation had some effect while pixels_per_cell and cells_per_block did not appear to have a lot of effect on the overall accuracy
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
@@ -79,6 +83,7 @@ Here's an example of the heatmap:
 Here's an example of my search windows. The red boxes are all the windows that were searched. The green boxes indicate that the image within the box was classified as a vehicle. The blue box is the result of the heatmap processing. 
 ![alt text][image4]
 
+
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
 In addition to the heatmap, window choice, and colorspace optimizations already mentioned I also optimized on window overlap. I found that overlapping some windows by more than 50% resulted in a better outcome. I balanced the benefits of overlap with the processing time to do the calculation.
@@ -87,6 +92,8 @@ Here's some examples of final results
 ![alt text][image5]
 ![alt text][image6]
 ![alt text][image7]
+
+I also added the svc.decision_function to further minimize false alarms in my search_windows method. By only allowing high confidence predictions, the resulting detection boxes are more accurate. 
 ---
 
 ### Video Implementation
@@ -97,7 +104,15 @@ Here's a [link to my video result](./output_images/project_video_output.mp4)
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-As mentioned earlier, I applied the heatmap algorithm and code presented in the video lectures to reduce false positives and combine bounding boxes. I provided examples of them above. 
+As mentioned earlier, I applied the heatmap algorithm and code presented in the video lectures to reduce false positives and combine bounding boxes. The boxes were very unstable from frame to frame. To fix this, I averaged the heatmaps over 10 frames of the video. This code can be found in the average_heat method of my code.
+
+Here are the boxes without heatmap averaging:
+
+![alt text][image8]
+
+And here are the boxes with heatmap averaging. You can see that averaging results in a much better box. 
+
+![alt text][image9]
 
 ---
 
@@ -107,6 +122,3 @@ As mentioned earlier, I applied the heatmap algorithm and code presented in the 
 
 First and foremost, my approach is too computationally expensive. I looked into HOG subsampling and couldn't get it working, but think I know how. There also seem to be some accuracy issues with my multi-scale windows, so this subsampling technique would help with that.
 
-I would also try to track the boxes between frames and perform some sort of smoothing to get a stable track. 
-
-Sigh, and I would like to have it so the box goes around the entire car. I was just happy that it found the car at all without any false alarms. 
