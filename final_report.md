@@ -13,8 +13,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 [image1]: ./output_images/car_notcar.png
 [image2]: ./output_images/HOGviz.png
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
+[image3]: ./output_images/heatmap.png
+[image4]: ./output_images/search_windows.png
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
@@ -59,15 +59,23 @@ Once I calculated the feature data, I normalized the data, shuffled the data, an
 
 My total accuracy on the test data was 99.1%
 
+I saved my trained classifier to a pickle file to be used later.
+
 See lines 65-125 in my  [training code](https://github.com/haallen/CarND-Vehicle-Detection-P5/blob/master/VehicleDetection_trainPipeline.py)
 
 ###Sliding Window Search
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+The code for searching an image is in the search_window method of my [testing file](https://github.com/haallen/CarND-Vehicle-Detection-P5/blob/master/VehicleDetection_testPipeline.py).
 
+The code for calling this method is in lines 251-292 of the same file. I created windows of 4 different scales to search. I also used the heatmap technique discussed in lectures to combine multiple detections and reduce false alarms.
+
+Here's an example of the heatmap:
 ![alt text][image3]
+
+Here's an example of my search windows. The red boxes are all the windows that were searched. The green boxes indicate that the image within the box was classified as a vehicle. The blue box is the result of the heatmap processing. 
+![alt text][image4]
 
 ####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
 
