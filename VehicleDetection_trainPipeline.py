@@ -61,7 +61,7 @@ plt.title('Example Car Image')
 plt.subplot(122)
 plt.imshow(notcarimage)
 plt.title('Example NonVehicle Image')
-""" 
+"""
 t=time.time()
 car_features = extract_features(cars, color_space=color_space, 
                         spatial_size=spatial_size, hist_bins=hist_bins, 
