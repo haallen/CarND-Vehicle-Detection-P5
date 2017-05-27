@@ -42,11 +42,11 @@ In my training [file](https://github.com/haallen/CarND-Vehicle-Detection-P5/blob
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `HLS` color space and HOG parameters of `orientations=11`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example using the `YCrCb` color space and HOG parameters of `orientations=11`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 ![alt text][image2]
 
-Note: this is only for the L channel .
+Interestingly, HLS color space provided good accuracy values but resulted in inconsistent detections of vehicles.
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
@@ -58,7 +58,7 @@ I used the following features to train my classifier: binned color features, col
 
 Once I calculated the feature data, I normalized the data, shuffled the data, and then split the data into training and test sets. I then fed this into a linear SVM classifier.
 
-My total accuracy on the test data was 99.1%
+My total accuracy on the test data was 99.4%
 
 I saved my trained classifier to a pickle file to be used later.
 
