@@ -115,18 +115,16 @@ def single_img_features(img, color_space='RGB', spatial_size=(32, 32),
     if color_space != 'RGB':
         if color_space == 'HSV':
             feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HSV)
-            feature_image=feature_image/255.0
         elif color_space == 'LUV':
             feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2LUV)
         elif color_space == 'HLS':
             feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2HLS)
-            feature_image=feature_image/255.0
         elif color_space == 'YUV':
             feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YUV)
         elif color_space == 'YCrCb':
             feature_image = cv2.cvtColor(img, cv2.COLOR_RGB2YCrCb)
-            feature_image=feature_image/255.0
-    else: feature_image = np.copy(img)      
+    else: 
+        feature_image = np.copy(img)      
     
     #3) Compute spatial features if flag is set
     if spatial_feat == True:

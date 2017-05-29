@@ -109,7 +109,7 @@ def search_windows(img, windows, clf, scaler, color_space='RGB',
         #7) If positive (prediction == 1) then save the window
             #AND if 
         if prediction == 1:
-            
+            #print(svc.decision_function(test_features))
             if svc.decision_function(test_features) > 0.1:
                 on_windows.append(window)
     
@@ -161,7 +161,7 @@ def average_heat(image,box_list):
 
     sumboxes=sum(box_list)
 
-    heat = apply_threshold(sumboxes,5)
+    heat = apply_threshold(sumboxes,3)
     heatmap = np.clip(heat, 0, 255)
     labels = label(heatmap)
     draw_img = draw_labeled_bboxes(np.copy(image), labels)
@@ -176,6 +176,7 @@ def average_heat(image,box_list):
     fig.tight_layout()
     """
     return draw_img
+
 def heatitup(image,box_list):
     
     heat = np.zeros_like(image[:,:,0]).astype(np.float)
@@ -192,7 +193,7 @@ def heatitup(image,box_list):
     # Find final boxes from heatmap using label function
     #labels = label(heatmap)
     #draw_img = draw_labeled_bboxes(np.copy(image), labels)
-    #print(draw_img)
+
     """
     fig = plt.figure()
     plt.subplot(121)
@@ -203,7 +204,7 @@ def heatitup(image,box_list):
     plt.title('Heat Map')
     fig.tight_layout()
     """
-    return heat
+    return heat #draw_img #heat
 
 #%%HOG Subsample
 
@@ -286,17 +287,20 @@ def process_image(image):
     # image you are searching is a .jpg (scaled 0 to 255)
     image = image.astype(np.float32)/255
     
-    #ystart = 405
-    #stop = 550
-    #scale = 1.2
-    
-    #windows = find_cars(image, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
-
-    #multi-scale windows
     boxes.current_windows=[]
+    boxes.current_hot_windows=[]
+    boxes.current_heatmap =[]
+    """
+    ystart = 405
+    ystop = 550
+    scale = 1.2
     
+    boxes.current_windows = find_cars(image, ystart, ystop, scale, svc, X_scaler, orient, pix_per_cell, cell_per_block, spatial_size, hist_bins)
+    """
+    #multi-scale windows
+
     boxes.current_windows.extend(slide_window(image, x_start_stop=[550,None], y_start_stop=[375, 525], 
-                        xy_window=(50, 50), xy_overlap=(0.6, 0.6)))
+                       xy_window=(50, 50), xy_overlap=(0.6, 0.6)))
 
     boxes.current_windows.extend(slide_window(image, x_start_stop=[475,None], y_start_stop=[375, 575], 
                         xy_window=(100, 100), xy_overlap=(0.5, 0.5)))
@@ -325,7 +329,7 @@ def process_image(image):
     boxes.current_heatmap=heatitup(draw_image,boxes.current_hot_windows)
     boxes.all_heatmaps.append(boxes.current_heatmap)
     
-    n=10#number of frames to average heatmaps over
+    n=20#number of frames to average heatmaps over
     averaged_heatmaps=average_heat(draw_image,boxes.all_heatmaps[-1-n:])
     
     return averaged_heatmaps
@@ -359,6 +363,6 @@ for img in images:
 """
 output = 'project_video_output.mp4'
 clipObj = VideoFileClip("project_video.mp4")
-#clipObj = VideoFileClip("project_video.mp4").subclip(20,30)
+#clipObj = VideoFileClip("project_video.mp4").subclip(15,25)
 clip = clipObj.fl_image(process_image) 
 clip.write_videofile(output, audio=False)
