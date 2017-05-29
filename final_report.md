@@ -74,7 +74,7 @@ See lines 65-125 in my  [training code](https://github.com/haallen/CarND-Vehicle
 
 The code for searching an image is in the search_window method of my [testing file](https://github.com/haallen/CarND-Vehicle-Detection-P5/blob/master/VehicleDetection_testPipeline.py).
 
-The code for calling this method is in lines 251-292 of the same file. I created windows of 4 different scales to search. I also used the heatmap technique discussed in lectures to combine multiple detections and reduce false alarms. This is in lines 118-177.
+The code for calling this method is in lines 251-292 of the same file. I created windows of 5 different scales to search. I also used the heatmap technique discussed in lectures to combine multiple detections and reduce false alarms. This is in lines 118-177.
 
 Here's an example of the heatmap:
 
@@ -94,7 +94,7 @@ Here's some examples of final results:
 ![alt text][image6]
 ![alt text][image7]
 
-I also added the svc.decision_function to further minimize false alarms in my search_windows method. By only allowing high confidence predictions, the resulting detection boxes are more accurate. 
+I also added the svc.decision_function to further minimize false alarms in my search_windows method. By only allowing high confidence predictions, the resulting detection boxes are more accurate.I didn't really have a problem with false detections, so the threshold for this is rather low.  
 
 
 ### Video Implementation
@@ -122,5 +122,7 @@ And here are the boxes with heatmap averaging. You can see that averaging result
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-First and foremost, my approach is too computationally expensive. I looked into HOG subsampling and couldn't get it working, but think I know how. There also seem to be some accuracy issues with my multi-scale windows, so this subsampling technique would help with that.
+First and foremost, my approach is too computationally expensive. I looked into HOG subsampling and couldn't get it working, but think I know how.
+
+I clearly have problems detecting the white car. This appears to be more of an issue with my classifier than with my sliding window search. I plan to revisit this and look at my features and parameters to see if I can fine-tune detection for the white car. 
 
