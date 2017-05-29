@@ -106,7 +106,7 @@ Here's a [link to my video result](./output_images/project_video_output.mp4)
 
 ####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
 
-As mentioned earlier, I applied the heatmap algorithm and code presented in the video lectures to reduce false positives and combine bounding boxes. The boxes were very unstable from frame to frame. To fix this, I averaged the heatmaps over 10 frames of the video. This code can be found in the average_heat method of my code.
+As mentioned earlier, I applied the heatmap algorithm and code presented in the video lectures to reduce false positives and combine bounding boxes. The boxes were very unstable from frame to frame. To fix this, I averaged the heatmaps over 20 frames of the video. This code can be found in the average_heat method of my code.
 
 Here are the boxes without heatmap averaging:
 
@@ -122,7 +122,8 @@ And here are the boxes with heatmap averaging. You can see that averaging result
 
 ####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
 
-First and foremost, my approach is too computationally expensive. I looked into HOG subsampling and couldn't get it working, but think I know how.
+First and foremost, my approach is too computationally expensive. I looked into HOG subsampling and couldn't get it working, but think I know how. Want to try to get that to work.
 
-I clearly have problems detecting the white car. This appears to be more of an issue with my classifier than with my sliding window search. I plan to revisit this and look at my features and parameters to see if I can fine-tune detection for the white car. 
+I also want to look into drawing a box around the whole car and not just part of it. This will require better a optimization of my classifier (perhaps adding more training data?) and better selection of search windows. The parameters that I am using for thresholding of the windows and heatmaps could also stand to be more finely tuned.
+
 
